@@ -48,4 +48,6 @@ app.use("/auth", AuthRouter);
 //   console.log(`server started, port: ${PORT}`)
 // );
 
-app.listen(PORT, () => console.log(`server started, port: ${PORT}`));
+app.listen(process.env.PORT, () =>
+  console.log(`server started, port: ${PORT}`)
+);
