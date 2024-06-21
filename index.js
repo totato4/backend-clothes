@@ -1,8 +1,6 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import Fingerprint from "express-fingerprint";
-import TokenService from "./services/Token.js";
 import cookieParser from "cookie-parser";
 
 import clothesRouter from "./routes/clothes.routes.js";
