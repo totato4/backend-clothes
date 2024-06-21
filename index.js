@@ -31,13 +31,13 @@ const PORT = process.env.PORT || 5000;
 const url = process.env.POSTGRES_URL;
 const app = express();
 app.use(cookieParser());
-app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
+app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
-app.use(
-  Fingerprint({
-    parameters: [Fingerprint.useragent, Fingerprint.acceptHeaders],
-  })
-);
+// app.use(
+//   Fingerprint({
+//     parameters: [Fingerprint.useragent, Fingerprint.acceptHeaders],
+//   })
+// );
 
 // app.use("/api", userRouter);
 // app.use("/api", postRouter);

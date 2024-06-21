@@ -12,7 +12,8 @@ import UserRepository from "../repositories/User.js";
 import { ACCESS_TOKEN_EXPIRATION } from "../constants.js";
 
 class AuthService {
-  static async signIn({ userName, password, fingerprint }) {
+  static async signIn({ userName, password }) {
+    // fingerprint
     const userData = await UserRepository.getUserData(userName);
     if (!userData) {
       throw new NotFound("Пользователь не найден");
@@ -29,8 +30,8 @@ class AuthService {
     await RefreshSessionsRepository.createRefreshSession({
       id: userData.id,
       refreshToken,
-      fingerprint,
     });
+    // fingerprint,
 
     return {
       accessToken,
@@ -39,7 +40,8 @@ class AuthService {
     };
   }
 
-  static async signUp({ userName, password, fingerprint, role }) {
+  static async signUp({ userName, password, role }) {
+    // fingerprint
     const userData = await UserRepository.getUserData(userName);
     if (userData) {
       throw new Conflict("Пользователь с таким именем уже существует");
@@ -56,7 +58,7 @@ class AuthService {
     await RefreshSessionsRepository.createRefreshSession({
       id,
       refreshToken,
-      fingerprint,
+      // fingerprint,
     });
     return {
       accessToken,
@@ -69,7 +71,8 @@ class AuthService {
     await RefreshSessionsRepository.deleteRefreshSession(refreshToken);
   }
 
-  static async refresh({ fingerprint, currentRefreshToken }) {
+  static async refresh({ currentRefreshToken }) {
+    // fingerprint
     if (!currentRefreshToken) {
       throw new Unauthorized();
     }
@@ -79,9 +82,9 @@ class AuthService {
     if (!refreshSession) {
       throw new Unauthorized();
     }
-    if (refreshSession.finger_print !== fingerprint.hash) {
-      throw new Forbidden();
-    }
+    // if (refreshSession.finger_print !== fingerprint.hash) {
+    //   throw new Forbidden();
+    // }
     await RefreshSessionsRepository.deleteRefreshSession(currentRefreshToken);
 
     let payload;
@@ -101,8 +104,8 @@ class AuthService {
     await RefreshSessionsRepository.createRefreshSession({
       id,
       refreshToken,
-      fingerprint,
     });
+    // fingerprint,
     return {
       accessToken,
       refreshToken,
