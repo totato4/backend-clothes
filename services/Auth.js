@@ -39,7 +39,7 @@ class AuthService {
     };
   }
 
-  static async signUp({ userName, password, fingerprint, role }) {
+  static async signUp({ userName, password, role }) {
     const userData = await UserRepository.getUserData(userName);
     if (userData) {
       throw new Conflict("Пользователь с таким именем уже существует");
@@ -56,7 +56,6 @@ class AuthService {
     await RefreshSessionsRepository.createRefreshSession({
       id,
       refreshToken,
-      fingerprint,
     });
     return {
       accessToken,
