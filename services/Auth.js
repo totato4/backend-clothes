@@ -12,7 +12,7 @@ import UserRepository from "../repositories/User.js";
 import { ACCESS_TOKEN_EXPIRATION } from "../constants.js";
 
 class AuthService {
-  static async signIn({ userName, password, fingerprint }) {
+  static async signIn({ userName, password }) {
     const userData = await UserRepository.getUserData(userName);
     if (!userData) {
       throw new NotFound("Пользователь не найден");
@@ -29,7 +29,6 @@ class AuthService {
     await RefreshSessionsRepository.createRefreshSession({
       id: userData.id,
       refreshToken,
-      fingerprint,
     });
 
     return {

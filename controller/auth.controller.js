@@ -7,7 +7,7 @@ class AuthController {
     const { userName, password } = req.body;
     try {
       const { accessToken, refreshToken, accessTokenExpiration } =
-        await AuthService.signIn({ userName, password, fingerprint });
+        await AuthService.signIn({ userName, password });
       res.cookie("refreshToken", refreshToken, COOKIE_SETTINGS.REFRESH_TOKEN);
 
       return res.status(200).json({ accessToken, accessTokenExpiration });
