@@ -6,13 +6,13 @@ dotenv.config();
 
 class TokenService {
   static async generateAccessToken(payload) {
-    return await jwt.sign(payload, "access_naruto", {
+    return await jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
       expiresIn: "30m",
     });
   }
 
   static async generateRefreshToken(payload) {
-    return await jwt.sign(payload, "refresh_sasuke", {
+    return await jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
       expiresIn: "15d",
     });
   }
