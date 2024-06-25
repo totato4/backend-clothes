@@ -6,16 +6,18 @@ dotenv.config();
 
 class TokenService {
   static async generateAccessToken(payload) {
-    return await jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+    return await jwt.sign(payload, "access_naruto", {
       expiresIn: "30m",
     });
   }
+  // process.env.ACCESS_TOKEN_SECRET
 
   static async generateRefreshToken(payload) {
-    return await jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+    return await jwt.sign(payload, "refresh_sasuke", {
       expiresIn: "15d",
     });
   }
+  // process.env.REFRESH_TOKEN_SECRET
 
   static async checkAccess(req, _, next) {
     const authHeader = req.headers.authorization;
