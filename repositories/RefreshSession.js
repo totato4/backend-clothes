@@ -12,7 +12,7 @@ class RefreshSessionRepository {
     return response.rows[0];
   }
 
-  static async createRefreshSession({ id, refreshToken, fingerprint }) {
+  static async createRefreshSession({ id, refreshToken }) {
     await pool.query(
       "INSERT INTO refresh_sessions (user_id, refresh_token) VALUES ($1,$2)",
       [id, refreshToken]
