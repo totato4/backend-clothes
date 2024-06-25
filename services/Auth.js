@@ -1,5 +1,4 @@
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import TokenService from "./Token.js";
 import {
   NotFound,
