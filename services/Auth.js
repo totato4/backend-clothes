@@ -67,7 +67,7 @@ class AuthService {
     await RefreshSessionsRepository.deleteRefreshSession(refreshToken);
   }
 
-  static async refresh({ fingerprint, currentRefreshToken }) {
+  static async refresh({ currentRefreshToken }) {
     if (!currentRefreshToken) {
       throw new Unauthorized();
     }
@@ -77,9 +77,7 @@ class AuthService {
     if (!refreshSession) {
       throw new Unauthorized();
     }
-    if (refreshSession.finger_print !== fingerprint.hash) {
-      throw new Forbidden();
-    }
+
     await RefreshSessionsRepository.deleteRefreshSession(currentRefreshToken);
 
     let payload;
@@ -99,7 +97,6 @@ class AuthService {
     await RefreshSessionsRepository.createRefreshSession({
       id,
       refreshToken,
-      fingerprint,
     });
     return {
       accessToken,
