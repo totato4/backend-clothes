@@ -6,11 +6,13 @@ class AuthController {
   static async signIn(req, res) {
     const { userName, password } = req.body;
     try {
-      const { accessToken, refreshToken, accessTokenExpiration } =
+      const { accessToken, refreshToken, accessTokenExpiration, id } =
         await AuthService.signIn({ userName, password });
       res.cookie("refreshToken", refreshToken, COOKIE_SETTINGS.REFRESH_TOKEN);
 
-      return res.status(200).json({ accessToken, accessTokenExpiration });
+      return res
+        .status(200)
+        .json({ accessToken, accessTokenExpiration, userName, id });
     } catch (err) {
       return ErrorsUtils.catchError(res, err);
     }
@@ -19,11 +21,13 @@ class AuthController {
   static async signUp(req, res) {
     const { userName, password, role } = req.body;
     try {
-      const { accessToken, refreshToken, accessTokenExpiration } =
+      const { accessToken, refreshToken, accessTokenExpiration, id } =
         await AuthService.signUp({ userName, password, role });
       res.cookie("refreshToken", refreshToken, COOKIE_SETTINGS.REFRESH_TOKEN);
 
-      return res.status(200).json({ accessToken, accessTokenExpiration });
+      return res
+        .status(200)
+        .json({ accessToken, accessTokenExpiration, userName, id });
     } catch (err) {
       return ErrorsUtils.catchError(res, err);
     }

@@ -34,6 +34,9 @@ class AuthService {
       accessToken,
       refreshToken,
       accessTokenExpiration: ACCESS_TOKEN_EXPIRATION,
+      userName: payload.userName,
+      id: payload.id,
+      role: payload.role,
     };
   }
 
@@ -55,10 +58,14 @@ class AuthService {
       id,
       refreshToken,
     });
+    console.log(payload);
     return {
       accessToken,
       refreshToken,
       accessTokenExpiration: ACCESS_TOKEN_EXPIRATION,
+      userName: payload.userName,
+      id: payload.id,
+      role: payload.role,
     };
   }
 

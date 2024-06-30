@@ -25,3 +25,8 @@ create table clothes (
 	image_url VARCHAR(50) NOT NULL,
 	color VARCHAR(50) NOT NULL
 );
+
+create table carts (
+	userName VARCHAR(255) NOT NULL,
+	products JSONB
+);

@@ -1,24 +1,24 @@
 import pool from "../db.js";
 
 class CartController {
-  async updateCart(req, res) {
-    const { user_id, items } = req.body;
-    const { rows } = await pool.query(
-      `INSERT INTO carts (user_id,items) values ($1, $2) RETURNING *`,
-      [user_id, items]
-    );
-    res.json(rows[0]);
+  static async getCart(req, res) {
+    try {
+      await CartService.getCart(refreshToken);
+      res.clearCookie("refreshToken");
+      return res.sendStatus(200);
+    } catch (err) {
+      return ErrorsUtils.catchError(res, err);
+    }
   }
-  async getUsers(req, res) {
-    const { rows } = await pool.query(`SELECT * FROM clothes`);
-    res.json(rows);
-  }
-  async getOneUser(req, res) {
-    const id = req.params.id;
-    const { rows } = await pool.query(`SELECT * FROM person where id = $1`, [
-      id,
-    ]);
-    res.json(rows[0]);
+  static async updateCart(req, res) {
+    const refreshToken = req.cookies.refreshToken;
+    try {
+      await AuthService.logOut(refreshToken);
+      res.clearCookie("refreshToken");
+      return res.sendStatus(200);
+    } catch (err) {
+      return ErrorsUtils.catchError(res, err);
+    }
   }
 }
 
