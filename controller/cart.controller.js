@@ -21,16 +21,27 @@ class CartController {
   }
   static async updateCart(req, res) {
     try {
-      const products = await CartRepository.updateCart({
-        userName: req.body.userName,
-        products: JSON.stringify(req.body.products),
-      });
+      const cart = await CartRepository.getCart(req.body.userName);
+      let products = false;
+      if (!cart) {
+        products = await CartRepository.createCart({
+          userName: req.body.userName,
+          products: JSON.stringify(req.body.products),
+        });
+      } else {
+        products = await CartRepository.updateCart({
+          userName: req.body.userName,
+          products: JSON.stringify(req.body.products),
+        });
+      }
+
       // if (products.length > 0) {
       //   return res.sendStatus(200).json(products);
       // } else {
       //   return res.sendStatus(200).json(false);
       // }
-      res.sendStatus(200).json(products);
+      console.log(products);
+      return res.sendStatus(200).json(products);
     } catch (err) {
       return ErrorsUtils.catchError(res, err);
     }
