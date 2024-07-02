@@ -21,8 +21,8 @@ class CartRepository {
 
   static async updateCart({ userName, products }) {
     const response = await pool.query(
-      "UPDATE carts SET products = $2 WHERE userName = $1",
-      [userName, products]
+      "UPDATE carts SET products = $1 WHERE userName = $2",
+      [products, userName]
     );
     return response.rows[0];
   }
