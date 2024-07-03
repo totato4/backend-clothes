@@ -14,7 +14,7 @@ class CartController {
       // } else {
       //   return res.status(200).json(false);
       // }
-      return res.status(200).json(products);
+      return res.status(200).json(products.products);
     } catch (err) {
       return ErrorsUtils.catchError(res, err);
     }
@@ -41,7 +41,7 @@ class CartController {
       //   return res.sendStatus(200).json(false);
       // }
       console.log(products);
-      return res.sendStatus(200).json(products);
+      return res.sendStatus(200).json(products.products);
     } catch (err) {
       return ErrorsUtils.catchError(res, err);
     }
