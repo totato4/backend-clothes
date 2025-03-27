@@ -55,44 +55,44 @@ const generateClothesData = (count = 1000) => {
 };
 
 class AdminController {
-  static async getAllClothes(req, res) {
-    try {
-      // Получаем параметры пагинации из запроса
-      const { page = 1, limit = 20 } = req.query;
-      const offset = (page - 1) * limit;
+  //   static async getAllClothes(req, res) {
+  //     try {
+  //       // Получаем параметры пагинации из запроса
+  //       const { page = 1, limit = 20 } = req.query;
+  //       const offset = (page - 1) * limit;
 
-      // Запрос для получения данных с пагинацией
-      const { rows } = await pool.query(
-        `SELECT * FROM myclothes ORDER BY id LIMIT $1 OFFSET $2`,
-        [limit, offset]
-      );
+  //       // Запрос для получения данных с пагинацией
+  //       const { rows } = await pool.query(
+  //         `SELECT * FROM myclothes ORDER BY id LIMIT $1 OFFSET $2`,
+  //         [limit, offset]
+  //       );
 
-      // Запрос для получения общего количества записей
-      const countResult = await pool.query(`SELECT COUNT(*) FROM myclothes`);
-      const totalCount = parseInt(countResult.rows[0].count);
-      const totalPages = Math.ceil(totalCount / limit);
+  //       // Запрос для получения общего количества записей
+  //       const countResult = await pool.query(`SELECT COUNT(*) FROM myclothes`);
+  //       const totalCount = parseInt(countResult.rows[0].count);
+  //       const totalPages = Math.ceil(totalCount / limit);
 
-      res.json({
-        success: true,
-        data: rows,
-        pagination: {
-          currentPage: parseInt(page),
-          itemsPerPage: parseInt(limit),
-          totalItems: totalCount,
-          totalPages,
-          hasNextPage: page < totalPages,
-          hasPrevPage: page > 1,
-        },
-      });
-    } catch (error) {
-      console.error("Ошибка при получении данных из myclothes:", error);
-      res.status(500).json({
-        success: false,
-        message: "Ошибка при получении данных",
-        error: error.message,
-      });
-    }
-  }
+  //       res.json({
+  //         success: true,
+  //         data: rows,
+  //         pagination: {
+  //           currentPage: parseInt(page),
+  //           itemsPerPage: parseInt(limit),
+  //           totalItems: totalCount,
+  //           totalPages,
+  //           hasNextPage: page < totalPages,
+  //           hasPrevPage: page > 1,
+  //         },
+  //       });
+  //     } catch (error) {
+  //       console.error("Ошибка при получении данных из myclothes:", error);
+  //       res.status(500).json({
+  //         success: false,
+  //         message: "Ошибка при получении данных",
+  //         error: error.message,
+  //       });
+  //     }
+  //   }
 
   static async populateMyClothesTable(req, res) {
     try {
