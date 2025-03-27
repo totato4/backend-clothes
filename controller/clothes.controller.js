@@ -2,109 +2,119 @@ import pool from "../db.js";
 
 class ClothesController {
   static async getClothes(req, res) {
-    let {
-      human_c = false,
-      size_c = false,
-      id = false,
-      brand_c = false,
-      color_c = false,
-      clothes_c = false,
-      price_max = false,
-      price_min = false,
-      search = false,
-      page,
-      limit = false,
-    } = req.query;
+    try {
+      // Деструктуризация с значениями по умолчанию
+      const {
+        human_c = "woman,man,kid",
+        size_c = "",
+        id = "",
+        brand_c = "",
+        color_c = "",
+        clothes_c = "",
+        price_max = "",
+        price_min = "",
+        search = "",
+        page = 1,
+        limit = 12,
+      } = req.query;
 
-    let select = " SELECT * FROM clothes ";
-    let where = " ";
+      // Базовые части запроса
+      const baseQuery = {
+        select: "SELECT * FROM clothes",
+        where: [],
+        params: [],
+        pagination: `ORDER BY id OFFSET $${1} LIMIT $${2}`,
+      };
 
-    if (req.query) {
-      where = " " + " WHERE " + " ";
-    }
+      // Параметры пагинации
+      const pageNumber = Math.max(1, parseInt(page)) || 1;
+      const limitNumber = Math.max(1, parseInt(limit)) || 12;
+      const offset = (pageNumber - 1) * limitNumber;
 
-    let human_q =
-      human_c !== false
-        ? ` human_c IN (${human_c.split(",").map((item) => "'" + item + "'")}) `
-        : " human_c IN ('woman','man','kid') ";
+      // Добавление параметров пагинации
+      baseQuery.params.push(offset, limitNumber);
 
-    let size_q =
-      size_c !== false
-        ? ` AND size_c IN (${size_c
-            .split(",")
-            .map((item) => "'" + item + "'")}) `
-        : " ";
+      // Функция для обработки IN условий
+      const buildInCondition = (field, values, defaultValue = null) => {
+        if (!values) return defaultValue;
 
-    let brand_q = brand_c
-      ? ` AND brand IN (${brand_c.split(",").map((item) => "'" + item + "'")})`
-      : " ";
+        const items = values.split(",").filter(Boolean);
+        if (items.length === 0) return defaultValue;
 
-    let color_q = color_c
-      ? ` AND color IN (${color_c.split(",").map((item) => "'" + item + "'")})`
-      : " ";
-    let clothes_q = clothes_c
-      ? ` AND clothes_c IN (${clothes_c
-          .split(",")
-          .map((item) => "'" + item + "'")})`
-      : " ";
-    let id_q = id
-      ? ` AND id IN (${id.split(",").map((item) => "'" + item + "'")})`
-      : " ";
-
-    let price_max_q = price_max ? ` AND price <= ${price_max} ` : " ";
-    let price_min_q = price_min ? ` AND price >= ${price_min}` : " ";
-
-    let search_q = search ? ` AND title iLIKE '%${search}%' ` : " ";
-
-    let pag_query;
-    if (page !== false && limit !== false && page != 0 && limit !== 0) {
-      page = page - 1;
-      pag_query = " ORDER BY id OFFSET " + page * limit + " LIMIT " + limit;
-    } else {
-      pag_query = " " + "ORDER BY id OFFSET 0 LIMIT 12";
-    }
-
-    const data = await pool.query(
-      select +
-        where +
-        human_q +
-        size_q +
-        brand_q +
-        color_q +
-        clothes_q +
-        id_q +
-        price_max_q +
-        price_min_q +
-        search_q +
-        pag_query
-    );
-
-    const totalCount = await pool.query(
-      select +
-        where +
-        human_q +
-        size_q +
-        brand_q +
-        color_q +
-        clothes_q +
-        id_q +
-        price_max_q +
-        price_min_q +
-        search_q
-    );
-
-    let totalPages = limit
-      ? Math.ceil(
-          totalCount.rows.length == 0 ? 0 : totalCount.rows.length / limit
-        )
-      : Math.ceil(
-          totalCount.rows.length == 0 ? 0 : totalCount.rows.length / 20
+        const placeholders = items.map(
+          (_, i) => `$${baseQuery.params.length + i + 1}`
         );
-    res.json({
-      product: data.rows,
-      totalPages,
-      totalCount: totalCount.rows.length,
-    });
+        baseQuery.params.push(...items);
+
+        return `${field} IN (${placeholders.join(", ")})`;
+      };
+
+      // Построение условий WHERE
+      const conditions = [
+        buildInCondition("human_c", human_c),
+        buildInCondition("size_c", size_c),
+        buildInCondition("brand", brand_c),
+        buildInCondition("color", color_c),
+        buildInCondition("clothes_c", clothes_c),
+        buildInCondition("id", id),
+      ].filter(Boolean);
+
+      // Добавление условий по цене
+      if (price_min) {
+        conditions.push(`price >= $${baseQuery.params.length + 1}`);
+        baseQuery.params.push(price_min);
+      }
+
+      if (price_max) {
+        conditions.push(`price <= $${baseQuery.params.length + 1}`);
+        baseQuery.params.push(price_max);
+      }
+
+      // Добавление условия поиска
+      if (search) {
+        conditions.push(`title ILIKE $${baseQuery.params.length + 1}`);
+        baseQuery.params.push(`%${search}%`);
+      }
+
+      // Сборка полного запроса
+      let query = baseQuery.select;
+
+      if (conditions.length > 0) {
+        query += ` WHERE ${conditions.join(" AND ")}`;
+      }
+
+      query += ` ${baseQuery.pagination}`;
+
+      // Выполнение запросов
+      const [data, totalCount] = await Promise.all([
+        pool.query(query, baseQuery.params),
+        pool.query(
+          query
+            .replace(baseQuery.pagination, "")
+            .replace(/SELECT \*/g, "SELECT COUNT(*)"),
+          baseQuery.params.slice(0, -2) // Исключаем параметры пагинации для подсчета общего количества
+        ),
+      ]);
+
+      // Расчет общего количества страниц
+      const totalItems = parseInt(totalCount.rows[0]?.count || 0);
+      const totalPages = Math.ceil(totalItems / limitNumber);
+
+      // Отправка ответа
+      res.json({
+        products: data.rows,
+        pagination: {
+          totalPages,
+          totalItems,
+          currentPage: pageNumber,
+          itemsPerPage: limitNumber,
+        },
+      });
+    } catch (error) {
+      console.error("Error in getClothes:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
   }
 }
+
 export default ClothesController;
