@@ -16,7 +16,7 @@ class ClothesController {
       limit = false,
     } = req.query;
 
-    let select = " SELECT * FROM clothes ";
+    let select = " SELECT * FROM myclothes ";
     let where = " ";
 
     if (req.query) {
