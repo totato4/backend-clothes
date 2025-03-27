@@ -1,4 +1,4 @@
-import pool from "./db.js";
+import pool from "../db.js";
 
 const generateClothesData = (count = 1000) => {
   const brands = ["cool", "super", "great"];
@@ -94,7 +94,7 @@ class AdminController {
   //     }
   //   }
 
-  static async populateMyClothesTable(req, res) {
+  static async populateClothesTable(req, res) {
     try {
       const clothesData = generateClothesData(1000);
 
@@ -164,13 +164,12 @@ class AdminController {
         insertedCount: clothesData.length,
       });
     } catch (error) {
-      //   console.error("Ошибка при заполнении таблицы myclothes:", error);
-      //   res.status(500).json({
-      //     success: false,
-      //     message: "Ошибка при заполнении таблицы",
-      //     error: error.message,
-      //   });
-      res.status(200).json({ success: true, message: "no data" });
+      console.error("Ошибка при заполнении таблицы myclothes:", error);
+      res.status(500).json({
+        success: false,
+        message: "Ошибка при заполнении таблицы",
+        error: error.message,
+      });
     }
   }
 }
