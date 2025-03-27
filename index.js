@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
 import clothesRouter from "./routes/clothes.routes.js";
-import adminRouter from "./routes/admin.routes.js";
 import AuthRouter from "./routes/auth.routes.js";
 import CartRouter from "./routes/cart.routes.js";
 import TokenService from "./services/Token.js";
@@ -31,7 +30,7 @@ app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
 
 app.use("/api", clothesRouter);
-app.use("/admin", adminRouter);
+// app.use("/admin", adminRouter);
 app.use("/auth", AuthRouter);
 app.use("/cart", CartRouter);
 app.get("/user", TokenService.checkAccess, (_, res) => {
