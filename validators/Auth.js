@@ -49,9 +49,9 @@ class AuthValidator {
     return validateRequest(req, res, next, logoutSchema);
   }
 
-  static async refresh(req, res, next) {
-    return validateRequest(req, res, next);
-  }
+  // static async refresh(req, res, next) {
+  //   return validateRequest(req, res, next);
+  // }
 }
 
 export default AuthValidator;
