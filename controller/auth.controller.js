@@ -3,6 +3,18 @@ import ErrorsUtils from "../utils/Errors.js";
 import { COOKIE_SETTINGS } from "../constants.js";
 
 class AuthController {
+  static async getUserInfo(req, res) {
+    const accessToken = req.body;
+    try {
+      const userData = await AuthService.getUserInfo(accessToken);
+      return res.status(200).json(userData);
+    } catch (err) {
+      return res
+        .status(500)
+        .json("Не удалось получить информацию о пользователе.");
+    }
+  }
+
   static async signIn(req, res) {
     const { userName, password } = req.body;
     try {
@@ -46,8 +58,6 @@ class AuthController {
 
   static async refresh(req, res) {
     const currentRefreshToken = req.cookies.refreshToken;
-    console.log(currentRefreshToken, "REFRESH");
-    console.log("hello");
     try {
       const { accessToken, refreshToken, accessTokenExpiration } =
         await AuthService.refresh({

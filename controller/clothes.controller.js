@@ -100,7 +100,7 @@ class ClothesController {
       : Math.ceil(
           totalCount.rows.length == 0 ? 0 : totalCount.rows.length / 20
         );
-    res.json({
+    return res.json({
       product: data.rows,
       totalPages,
       totalCount: totalCount.rows.length,

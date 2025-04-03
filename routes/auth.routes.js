@@ -8,5 +8,6 @@ router.post("/sign-in", AuthValidator.signIn, AuthController.signIn);
 router.post("/sign-up", AuthValidator.signUp, AuthController.signUp);
 router.post("/logout", AuthValidator.logOut, AuthController.logOut);
 router.get("/refresh", AuthController.refresh);
+router.post("/user", AuthController.getUserInfo);
 
 export default router;

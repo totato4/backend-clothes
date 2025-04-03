@@ -11,6 +11,14 @@ import UserRepository from "../repositories/User.js";
 import { ACCESS_TOKEN_EXPIRATION } from "../constants.js";
 
 class AuthService {
+  static async getUserInfo({ accessToken }) {
+    const user = await TokenService.verifyAccessToken(accessToken);
+    if (user) {
+      const { name, role } = await UserRepository.getUserById(user.id);
+      return { name, role };
+    }
+    return "no user";
+  }
   static async signIn({ userName, password }) {
     const userData = await UserRepository.getUserData(userName);
     if (!userData) {
